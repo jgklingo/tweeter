@@ -54,7 +54,7 @@ const UserItemScroller = (props: Props) => {
     const loadMoreItems = async () => {
         presenter.loadMoreItems(authToken!, displayedUser!.alias);
         setChangedDisplayedUser(false);
-    };
+    }
 
     return (
         <div className="container px-0 overflow-visible vh-100">
