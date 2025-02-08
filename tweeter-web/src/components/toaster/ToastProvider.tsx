@@ -13,8 +13,7 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
     const [toastInfo, setToastInfo] = useState(defaultToastInfo);
 
     const listener: ToastProviderView = {
-        setToastInfo: setToastInfo,
-        getToastInfo: () => toastInfo
+        setToastInfo: setToastInfo
     }
 
     const [presenter] = useState(new ToastProviderPresenter(listener));
@@ -23,21 +22,21 @@ const ToastProvider: React.FC<Props> = ({ children }) => {
         <ToastInfoContext.Provider
             value={{
                 ...toastInfo,
-                displaySuccessToast: presenter.displaySuccessToast,
-                displayErrorToast: presenter.displayErrorToast,
-                displayInfoToast: presenter.displayInfoToast,
-                displayWarningToast: presenter.displayWarningToast,
-                deleteToast: presenter.deleteToast,
-                deleteAllToasts: presenter.deleteAllToasts,
-                deleteAllSuccessToasts: presenter.deleteAllSuccessToasts,
-                deleteAllErrorToasts: presenter.deleteAllErrorToasts,
-                deleteAllInfoToasts: presenter.deleteAllInfoToasts,
-                deleteAllWarningToasts: presenter.deleteAllWarningToasts,
-                deleteLastToast: presenter.deleteLastToast,
-                deleteLastSuccessToast: presenter.deleteLastSuccessToast,
-                deleteLastErrorToast: presenter.deleteLastErrorToast,
-                deleteLastInfoToast: presenter.deleteLastInfoToast,
-                deleteLastWarningToast: presenter.deleteLastWarningToast,
+                displaySuccessToast: presenter.displaySuccessToastGenerator(toastInfo),
+                displayErrorToast: presenter.displayErrorToastGenerator(toastInfo),
+                displayInfoToast: presenter.displayInfoToastGenerator(toastInfo),
+                displayWarningToast: presenter.displayWarningToastGenerator(toastInfo),
+                deleteToast: presenter.deleteToastGenerator(toastInfo),
+                deleteAllToasts: presenter.deleteAllToastsGenerator(toastInfo),
+                deleteAllSuccessToasts: presenter.deleteAllSuccessToastsGenerator(toastInfo),
+                deleteAllErrorToasts: presenter.deleteAllErrorToastsGenerator(toastInfo),
+                deleteAllInfoToasts: presenter.deleteAllInfoToastsGenerator(toastInfo),
+                deleteAllWarningToasts: presenter.deleteAllWarningToastsGenerator(toastInfo),
+                deleteLastToast: presenter.deleteLastToastGenerator(toastInfo),
+                deleteLastSuccessToast: presenter.deleteLastSuccessToastGenerator(toastInfo),
+                deleteLastErrorToast: presenter.deleteLastErrorToastGenerator(toastInfo),
+                deleteLastInfoToast: presenter.deleteLastInfoToastGenerator(toastInfo),
+                deleteLastWarningToast: presenter.deleteLastWarningToastGenerator(toastInfo),
             }}
         >
             {children}
