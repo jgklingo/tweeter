@@ -13,8 +13,8 @@ export class AppNavbarPresenter {
     private view: AppNavbarView;
 
     public constructor(view: AppNavbarView) {
-        this.view = view;
         this.userService = new UserService();
+        this.view = view;
     }
 
     public async logOut(authToken: AuthToken) {
