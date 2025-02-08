@@ -15,6 +15,7 @@ const Register = () => {
     const [password, setPassword] = useState("");
     const [imageUrl, setImageUrl] = useState<string>("");
     const [rememberMe, setRememberMe] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const navigate = useNavigate();
     const { updateUserInfo } = useUserInfo();
@@ -43,6 +44,7 @@ const Register = () => {
         updateUserInfo: updateUserInfo,
         navigate: navigate,
         displayErrorMessage: displayErrorMessage,
+        setIsLoading: setIsLoading,
         setImageUrl: setImageUrl
     }
 
@@ -114,7 +116,7 @@ const Register = () => {
             }
             setRememberMe={setRememberMe}
             submitButtonDisabled={checkSubmitButtonStatus}
-            isLoading={presenter.isLoading}
+            isLoading={isLoading}
             submit={doRegister}
         />
     );

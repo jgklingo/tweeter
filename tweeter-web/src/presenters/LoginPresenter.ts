@@ -4,13 +4,13 @@ import { UserService } from "../model/service/UserService";
 export interface LoginView {
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void,
     navigate: (to: string) => void | Promise<void>,
-    displayErrorMessage: (message: string) => void
+    displayErrorMessage: (message: string) => void,
+    setIsLoading: (value: boolean) => void
 }
 
 export class LoginPresenter {
     private userService: UserService;
     private view: LoginView;
-    private _isLoading = false;
 
     public constructor(view: LoginView) {
         this.userService = new UserService();
@@ -23,7 +23,7 @@ export class LoginPresenter {
 
     public async doLogin(alias: string, password: string, rememberMe: boolean, originalUrl?: string) {
         try {
-            this.isLoading = true;
+            this.view.setIsLoading(true);
 
             const [user, authToken] = await this.userService.login(alias, password);
 
@@ -39,15 +39,7 @@ export class LoginPresenter {
                 `Failed to log user in because of exception: ${error}`
             );
         } finally {
-            this.isLoading = false;
+            this.view.setIsLoading(false);
         }
     };
-
-    public get isLoading() {
-        return this._isLoading;
-    }
-
-    public set isLoading(value: boolean) {
-        this._isLoading = value;
-    }
 }

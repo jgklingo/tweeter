@@ -6,6 +6,7 @@ export interface RegisterView {
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void,
     navigate: (to: string) => void | Promise<void>,
     displayErrorMessage: (message: string) => void,
+    setIsLoading: (value: boolean) => void,
     setImageUrl: (imageUrl: string) => void
 }
 
@@ -14,14 +15,12 @@ export class RegisterPresenter {
     private view: RegisterView;
     private imageBytes: Uint8Array;
     private imageFileExtension: string;
-    private _isLoading: boolean;
 
     public constructor(view: RegisterView) {
         this.userService = new UserService();
         this.view = view;
         this.imageBytes = new Uint8Array();
         this.imageFileExtension = "";
-        this._isLoading = false;
     }
 
     public checkSubmitButtonStatus(
@@ -85,7 +84,7 @@ export class RegisterPresenter {
         rememberMe: boolean
     ) {
         try {
-            this._isLoading = true;
+            this.view.setIsLoading(true);
 
             const [user, authToken] = await this.userService.register(
                 firstName,
@@ -103,15 +102,7 @@ export class RegisterPresenter {
                 `Failed to register user because of exception: ${error}`
             );
         } finally {
-            this._isLoading = false;
+            this.view.setIsLoading(false);
         }
     };
-
-    public get isLoading() {
-        return this._isLoading;
-    }
-
-    public set isLoading(value: boolean) {
-        this._isLoading = value;
-    }
 }
