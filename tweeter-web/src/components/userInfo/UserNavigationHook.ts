@@ -1,6 +1,8 @@
 import { AuthToken, User, FakeData } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
 import useUserInfo from "./UserInfoHook";
+import { UserNavigationHookPresenter, UserNavigationHookView } from "../../presenters/UserNavigationHookPresenter";
+import { useState } from "react";
 
 interface UserNavigationHook {
     navigateToUser: (event: React.MouseEvent) => Promise<void>;
@@ -12,38 +14,15 @@ const useNavigateToUser = (): UserNavigationHook => {
 
     const navigateToUser = async (event: React.MouseEvent): Promise<void> => {
         event.preventDefault();
-
-        try {
-            const alias = extractAlias(event.target.toString());
-
-            const user = await getUser(authToken!, alias);
-
-            if (!!user) {
-                if (currentUser!.equals(user)) {
-                    setDisplayedUser(currentUser!);
-                } else {
-                    setDisplayedUser(user);
-                }
-            }
-        } catch (error) {
-            displayErrorMessage(
-                `Failed to get user because of exception: ${error}`
-            );
-        }
+        presenter.navigateToUser(event.target.toString(), authToken!, currentUser!);
     };
 
-    const extractAlias = (value: string): string => {
-        const index = value.indexOf("@");
-        return value.substring(index);
-    };
+    const listener: UserNavigationHookView = {
+        setDisplayedUser: setDisplayedUser,
+        displayErrorMessage: displayErrorMessage
+    }
 
-    const getUser = async (
-        authToken: AuthToken,
-        alias: string
-    ): Promise<User | null> => {
-        // TODO: Replace with the result of calling server
-        return FakeData.instance.findUserByAlias(alias);
-    };
+    const [presenter] = useState(new UserNavigationHookPresenter(listener))
 
     return {
         navigateToUser: navigateToUser,
