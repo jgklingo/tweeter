@@ -5,8 +5,8 @@ import {
     makeInfoToast,
     makeSuccessToast,
     makeWarningToast,
-} from "../components/toaster/Toast";
-import { ToastInfo } from "../components/toaster/ToastInfo";
+} from "../model/Toast";
+import { ToastInfo } from "../model/ToastInfo";
 
 export interface ToastProviderView {
     setToastInfo: (value: ToastInfo) => void

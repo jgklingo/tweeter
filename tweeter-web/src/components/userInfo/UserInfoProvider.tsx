@@ -1,6 +1,6 @@
 import { Context, createContext, useEffect, useState } from "react";
 import { UserInfoProviderPresenter, UserInfoProviderView } from "../../presenters/UserInfoProviderPresenter";
-import { UserInfo, defaultUserInfo } from "./UserInfoStruct";
+import { UserInfo, defaultUserInfo } from "../../model/UserInfo";
 
 export const UserInfoContext: Context<UserInfo> =
     createContext<UserInfo>(defaultUserInfo);

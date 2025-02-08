@@ -1,6 +1,6 @@
 import { Context, createContext, useState } from "react";
 import { ToastProviderPresenter, ToastProviderView } from "../../presenters/ToastProviderPresenter";
-import { ToastInfo, defaultToastInfo } from "./ToastInfo";
+import { ToastInfo, defaultToastInfo } from "../../model/ToastInfo";
 
 export const ToastInfoContext: Context<ToastInfo> =
     createContext<ToastInfo>(defaultToastInfo);

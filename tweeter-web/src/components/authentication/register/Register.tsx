@@ -25,12 +25,6 @@ const Register = () => {
         return presenter.checkSubmitButtonStatus(firstName, lastName, alias, password, imageUrl)
     }
 
-    const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
-        if (event.key == "Enter" && !checkSubmitButtonStatus()) {
-            doRegister();
-        }
-    };
-
     const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         presenter.handleImageFile(file);
@@ -39,6 +33,12 @@ const Register = () => {
     const doRegister = async () => {
         presenter.doRegister(firstName, lastName, alias, password, rememberMe)
     }
+
+    const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
+        if (event.key == "Enter" && !checkSubmitButtonStatus()) {
+            doRegister();
+        }
+    };
 
     const listener: RegisterView = {
         updateUserInfo: updateUserInfo,

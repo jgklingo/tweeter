@@ -26,15 +26,15 @@ const Login = (props: Props) => {
         return presenter.checkSubmitButtonStatus(alias, password);
     }
 
+    const doLogin = async () => {
+        presenter.doLogin(alias, password, rememberMe, props.originalUrl)
+    }
+
     const loginOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
         if (event.key == "Enter" && !checkSubmitButtonStatus()) {
             doLogin();
         }
     };
-
-    const doLogin = async () => {
-        presenter.doLogin(alias, password, rememberMe, props.originalUrl)
-    }
 
     const listener: LoginView = {
         updateUserInfo: updateUserInfo,

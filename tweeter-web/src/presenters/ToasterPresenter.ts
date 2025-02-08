@@ -1,4 +1,4 @@
-import { Toast } from "../components/toaster/Toast";
+import { Toast } from "../model/Toast";
 
 export interface ToasterView {
     deleteToast: (id: string) => void
