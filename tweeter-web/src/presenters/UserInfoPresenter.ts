@@ -14,12 +14,10 @@ export interface UserInfoView {
 }
 
 export class UserInfoPresenter {
-    private userService: UserService;
     private followService: FollowService;
     private view: UserInfoView;
 
     public constructor(view: UserInfoView) {
-        this.userService = new UserService();
         this.followService = new FollowService();
         this.view = view;
     }
