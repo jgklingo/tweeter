@@ -1,5 +1,6 @@
 import { AuthToken, User } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
+import { FollowService } from "../model/service/FollowService";
 
 export interface UserInfoView {
     displayInfoMessage: (message: string, duration: number) => void,
@@ -13,11 +14,13 @@ export interface UserInfoView {
 }
 
 export class UserInfoPresenter {
-    private userService: UserService
+    private userService: UserService;
+    private followService: FollowService;
     private view: UserInfoView;
 
     public constructor(view: UserInfoView) {
         this.userService = new UserService();
+        this.followService = new FollowService();
         this.view = view;
     }
 
@@ -31,7 +34,7 @@ export class UserInfoPresenter {
                 this.view.setIsFollower(false);
             } else {
                 this.view.setIsFollower(
-                    await this.userService.getIsFollowerStatus(
+                    await this.followService.getIsFollowerStatus(
                         authToken!,
                         currentUser!,
                         displayedUser!
@@ -50,7 +53,7 @@ export class UserInfoPresenter {
         displayedUser: User
     ) {
         try {
-            this.view.setFolloweeCount(await this.userService.getFolloweeCount(authToken, displayedUser));
+            this.view.setFolloweeCount(await this.followService.getFolloweeCount(authToken, displayedUser));
         } catch (error) {
             this.view.displayErrorMessage(
                 `Failed to get followees count because of exception: ${error}`
@@ -63,7 +66,7 @@ export class UserInfoPresenter {
         displayedUser: User
     ) {
         try {
-            this.view.setFollowerCount(await this.userService.getFollowerCount(authToken, displayedUser));
+            this.view.setFollowerCount(await this.followService.getFollowerCount(authToken, displayedUser));
         } catch (error) {
             this.view.displayErrorMessage(
                 `Failed to get followers count because of exception: ${error}`
@@ -80,7 +83,7 @@ export class UserInfoPresenter {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Following ${displayedUser.name}...`, 0);
 
-            const [followerCount, followeeCount] = await this.userService.follow(
+            const [followerCount, followeeCount] = await this.followService.follow(
                 authToken!,
                 displayedUser!
             );
@@ -103,7 +106,7 @@ export class UserInfoPresenter {
             this.view.setIsLoading(true);
             this.view.displayInfoMessage(`Unfollowing ${displayedUser.name}...`, 0);
 
-            const [followerCount, followeeCount] = await this.userService.unfollow(
+            const [followerCount, followeeCount] = await this.followService.unfollow(
                 authToken,
                 displayedUser
             );
