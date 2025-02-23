@@ -1,18 +1,17 @@
 import { User, AuthToken } from "tweeter-shared";
 import { UserInfo, defaultUserInfo } from "../model/UserInfo";
+import { Presenter, View } from "./Presenter";
 
 const CURRENT_USER_KEY: string = "CurrentUserKey";
 const AUTH_TOKEN_KEY: string = "AuthTokenKey";
 
-export interface UserInfoProviderView {
-    setUserInfo: (value: UserInfo) => void
+export interface UserInfoProviderView extends View {
+    setUserInfo: (value: UserInfo) => void;
 }
 
-export class UserInfoProviderPresenter {
-    private view: UserInfoProviderView;
-
+export class UserInfoProviderPresenter extends Presenter<UserInfoProviderView> {
     public constructor(view: UserInfoProviderView) {
-        this.view = view;
+        super(view);
     }
 
     public saveToLocalStorage(

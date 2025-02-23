@@ -7,16 +7,15 @@ import {
     makeWarningToast,
 } from "../model/Toast";
 import { ToastInfo } from "../model/ToastInfo";
+import { Presenter, View } from "./Presenter";
 
-export interface ToastProviderView {
-    setToastInfo: (value: ToastInfo) => void
+export interface ToastProviderView extends View {
+    setToastInfo: (value: ToastInfo) => void;
 }
 
-export class ToastProviderPresenter {
-    private view: ToastProviderView;
-
+export class ToastProviderPresenter extends Presenter<ToastProviderView> {
     public constructor(view: ToastProviderView) {
-        this.view = view;
+        super(view);
     };
 
     public displayToast = (toast: Toast, toastInfo: ToastInfo) => {
