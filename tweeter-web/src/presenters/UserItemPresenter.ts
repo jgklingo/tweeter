@@ -1,7 +1,7 @@
 import { AuthToken, User } from "tweeter-shared";
-import { Presenter, ErrorView } from "./Presenter";
+import { Presenter, View } from "./Presenter";
 
-export interface UserItemView extends ErrorView {
+export interface UserItemView extends View {
     addItems: (newItems: User[]) => void;
 }
 

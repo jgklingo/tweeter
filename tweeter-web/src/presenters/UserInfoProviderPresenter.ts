@@ -83,36 +83,4 @@ export class UserInfoProviderPresenter extends Presenter<UserInfoProviderView> {
             this.view.setUserInfo({ ...userInfo, displayedUser: user });
         }
     }
-
-    // public updateUserInfo(
-    //     currentUser: User,
-    //     displayedUser: User | null,
-    //     authToken: AuthToken,
-    //     remember: boolean
-    // ) {
-    //     this.view.setUserInfo({
-    //         ...this.view.getUserInfo(),
-    //         currentUser: currentUser,
-    //         displayedUser: displayedUser,
-    //         authToken: authToken,
-    //     });
-
-    //     if (remember) {
-    //         this.saveToLocalStorage(currentUser, authToken);
-    //     }
-    // };
-
-    // public clearUserInfo() {
-    //     this.view.setUserInfo({
-    //         ...this.view.getUserInfo(),
-    //         currentUser: null,
-    //         displayedUser: null,
-    //         authToken: null,
-    //     });
-    //     this.clearLocalStorage();
-    // };
-
-    // public setDisplayedUser(user: User) {
-    //     this.view.setUserInfo({ ...this.view.getUserInfo(), displayedUser: user });
-    // };
 }

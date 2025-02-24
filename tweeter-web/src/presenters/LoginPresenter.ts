@@ -1,8 +1,8 @@
 import { User, AuthToken } from "tweeter-shared";
 import { UserService } from "../model/service/UserService";
-import { Presenter, ErrorView } from "./Presenter";
+import { Presenter, View } from "./Presenter";
 
-export interface LoginView extends ErrorView {
+export interface LoginView extends View {
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void,
     navigate: (to: string) => void | Promise<void>,
     setIsLoading: (value: boolean) => void
@@ -21,24 +21,24 @@ export class LoginPresenter extends Presenter<LoginView> {
     };
 
     public async doLogin(alias: string, password: string, rememberMe: boolean, originalUrl?: string) {
-        try {
-            this.view.setIsLoading(true);
+        this.doFailureReportingOperation(
+            async () => {
+                this.view.setIsLoading(true);
 
-            const [user, authToken] = await this.userService.login(alias, password);
+                const [user, authToken] = await this.userService.login(alias, password);
 
-            this.view.updateUserInfo(user, user, authToken, rememberMe);
+                this.view.updateUserInfo(user, user, authToken, rememberMe);
 
-            if (!!originalUrl) {
-                this.view.navigate(originalUrl);
-            } else {
-                this.view.navigate("/");
+                if (!!originalUrl) {
+                    this.view.navigate(originalUrl);
+                } else {
+                    this.view.navigate("/");
+                }
+            },
+            "log user in",
+            () => {
+                this.view.setIsLoading(false);
             }
-        } catch (error) {
-            this.view.displayErrorMessage(
-                `Failed to log user in because of exception: ${error}`
-            );
-        } finally {
-            this.view.setIsLoading(false);
-        }
+        );
     };
 }

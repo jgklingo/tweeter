@@ -1,7 +1,7 @@
 import { AuthToken, Status } from "tweeter-shared";
-import { Presenter, ErrorView } from "./Presenter";
+import { Presenter, View } from "./Presenter";
 
-export interface StatusItemView extends ErrorView {
+export interface StatusItemView extends View {
     addItems: (newItems: Status[]) => void;
 }
 
