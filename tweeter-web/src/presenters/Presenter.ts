@@ -1,3 +1,5 @@
+import { User, AuthToken } from "tweeter-shared";
+
 export interface View { }
 
 export interface ErrorView extends View {

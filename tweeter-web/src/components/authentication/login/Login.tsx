@@ -27,7 +27,7 @@ const Login = (props: Props) => {
     }
 
     const doLogin = async () => {
-        presenter.doLogin(alias, password, rememberMe, props.originalUrl)
+        presenter.doAuthentication('', '', alias, password, rememberMe, props.originalUrl)
     }
 
     const loginOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {

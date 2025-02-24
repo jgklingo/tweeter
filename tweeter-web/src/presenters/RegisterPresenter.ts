@@ -1,23 +1,17 @@
 import { Buffer } from "buffer";
-import { UserService } from "../model/service/UserService";
+import { AuthenticationPresenter, AuthenticationView } from "./AuthenticationPresenter";
 import { User, AuthToken } from "tweeter-shared";
-import { ErrorPresenter, ErrorView } from "./Presenter";
 
-export interface RegisterView extends ErrorView {
-    updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
-    navigate: (to: string) => void | Promise<void>;
-    setIsLoading: (value: boolean) => void;
+export interface RegisterView extends AuthenticationView {
     setImageUrl: (imageUrl: string) => void;
 }
 
-export class RegisterPresenter extends ErrorPresenter<RegisterView> {
-    private userService: UserService;
+export class RegisterPresenter extends AuthenticationPresenter<RegisterView> {
     private imageBytes: Uint8Array;
     private imageFileExtension: string;
 
     public constructor(view: RegisterView) {
         super(view);
-        this.userService = new UserService();
         this.imageBytes = new Uint8Array();
         this.imageFileExtension = "";
     }
@@ -36,6 +30,21 @@ export class RegisterPresenter extends ErrorPresenter<RegisterView> {
             !password ||
             !imageUrl ||
             !this.imageFileExtension
+        );
+    };
+
+    protected getOperationDescription(): string {
+        return "register user";
+    };
+
+    protected getUserAuthToken(firstName: string, lastName: string, alias: string, password: string): Promise<[User, AuthToken]> {
+        return this.userService.register(
+            firstName,
+            lastName,
+            alias,
+            password,
+            this.imageBytes,
+            this.imageFileExtension
         );
     };
 
@@ -73,35 +82,5 @@ export class RegisterPresenter extends ErrorPresenter<RegisterView> {
 
     private getFileExtension(file: File): string | undefined {
         return file.name.split(".").pop();
-    };
-
-    public async doRegister(
-        firstName: string,
-        lastName: string,
-        alias: string,
-        password: string,
-        rememberMe: boolean
-    ) {
-        this.doFailureReportingOperation(
-            async () => {
-                this.view.setIsLoading(true);
-
-                const [user, authToken] = await this.userService.register(
-                    firstName,
-                    lastName,
-                    alias,
-                    password,
-                    this.imageBytes,
-                    this.imageFileExtension
-                );
-
-                this.view.updateUserInfo(user, user, authToken, rememberMe);
-                this.view.navigate("/");
-            },
-            "register user",
-            () => {
-                this.view.setIsLoading(false);
-            }
-        );
     };
 }

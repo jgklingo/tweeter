@@ -1,44 +1,22 @@
 import { User, AuthToken } from "tweeter-shared";
-import { UserService } from "../model/service/UserService";
-import { ErrorPresenter, ErrorView } from "./Presenter";
+import { AuthenticationPresenter, AuthenticationView } from "./AuthenticationPresenter";
 
-export interface LoginView extends ErrorView {
-    updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void,
-    navigate: (to: string) => void | Promise<void>,
-    setIsLoading: (value: boolean) => void
-}
+export interface LoginView extends AuthenticationView { }
 
-export class LoginPresenter extends ErrorPresenter<LoginView> {
-    private userService: UserService;
-
+export class LoginPresenter extends AuthenticationPresenter<LoginView> {
     public constructor(view: LoginView) {
         super(view);
-        this.userService = new UserService();
     }
 
     public checkSubmitButtonStatus(alias: string, password: string): boolean {
         return !alias || !password;
     };
 
-    public async doLogin(alias: string, password: string, rememberMe: boolean, originalUrl?: string) {
-        this.doFailureReportingOperation(
-            async () => {
-                this.view.setIsLoading(true);
+    protected getOperationDescription(): string {
+        return "log user in";
+    };
 
-                const [user, authToken] = await this.userService.login(alias, password);
-
-                this.view.updateUserInfo(user, user, authToken, rememberMe);
-
-                if (!!originalUrl) {
-                    this.view.navigate(originalUrl);
-                } else {
-                    this.view.navigate("/");
-                }
-            },
-            "log user in",
-            () => {
-                this.view.setIsLoading(false);
-            }
-        );
+    protected getUserAuthToken(firstName: string, lastName: string, alias: string, password: string): Promise<[User, AuthToken]> {
+        return this.userService.login(alias, password);
     };
 }

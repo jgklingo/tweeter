@@ -31,7 +31,7 @@ const Register = () => {
     };
 
     const doRegister = async () => {
-        presenter.doRegister(firstName, lastName, alias, password, rememberMe)
+        presenter.doAuthentication(firstName, lastName, alias, password, rememberMe)
     }
 
     const registerOnEnter = (event: React.KeyboardEvent<HTMLElement>) => {
