@@ -1,16 +1,16 @@
 import { Buffer } from "buffer";
 import { UserService } from "../model/service/UserService";
 import { User, AuthToken } from "tweeter-shared";
-import { Presenter, View } from "./Presenter";
+import { ErrorPresenter, ErrorView } from "./Presenter";
 
-export interface RegisterView extends View {
+export interface RegisterView extends ErrorView {
     updateUserInfo: (currentUser: User, displayedUser: User | null, authToken: AuthToken, remember: boolean) => void;
     navigate: (to: string) => void | Promise<void>;
     setIsLoading: (value: boolean) => void;
     setImageUrl: (imageUrl: string) => void;
 }
 
-export class RegisterPresenter extends Presenter<RegisterView> {
+export class RegisterPresenter extends ErrorPresenter<RegisterView> {
     private userService: UserService;
     private imageBytes: Uint8Array;
     private imageFileExtension: string;

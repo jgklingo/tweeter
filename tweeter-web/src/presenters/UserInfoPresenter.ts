@@ -1,7 +1,6 @@
 import { AuthToken, User } from "tweeter-shared";
-import { UserService } from "../model/service/UserService";
 import { FollowService } from "../model/service/FollowService";
-import { MessageView, Presenter } from "./Presenter";
+import { MessageView, ErrorPresenter } from "./Presenter";
 
 export interface UserInfoView extends MessageView {
     setIsFollower: (value: boolean) => void,
@@ -11,7 +10,7 @@ export interface UserInfoView extends MessageView {
     setIsLoading: (value: boolean) => void
 }
 
-export class UserInfoPresenter extends Presenter<UserInfoView> {
+export class UserInfoPresenter extends ErrorPresenter<UserInfoView> {
     private followService: FollowService;
 
     public constructor(view: UserInfoView) {

@@ -1,8 +1,10 @@
-export interface View {
+export interface View { }
+
+export interface ErrorView extends View {
     displayErrorMessage: (message: string) => void;
 }
 
-export interface MessageView extends View {
+export interface MessageView extends ErrorView {
     displayInfoMessage: (message: string, duration: number) => void;
     clearLastInfoMessage: () => void;
 }
@@ -17,7 +19,9 @@ export class Presenter<V extends View> {
     protected get view(): V {
         return this._view
     }
+}
 
+export class ErrorPresenter<V extends ErrorView> extends Presenter<V> {
     protected async doFailureReportingOperation(
         operation: () => Promise<void>,
         operationDescription: string,

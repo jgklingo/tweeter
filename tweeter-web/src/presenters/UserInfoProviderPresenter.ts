@@ -1,5 +1,5 @@
 import { User, AuthToken } from "tweeter-shared";
-import { UserInfo, defaultUserInfo } from "../model/UserInfo";
+import { UserInfo } from "../model/UserInfo";
 import { Presenter, View } from "./Presenter";
 
 const CURRENT_USER_KEY: string = "CurrentUserKey";
