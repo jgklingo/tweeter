@@ -10,8 +10,6 @@ describe("AppNavbarPresenter", () => {
 
     const authToken = new AuthToken("abc123", Date.now());
 
-
-
     beforeEach(() => {
         mockAppNavbarView = mock<AppNavbarView>();
         const mockAppNavbarViewInstance = instance(mockAppNavbarView);
@@ -26,7 +24,7 @@ describe("AppNavbarPresenter", () => {
 
     it("tells the view to display a logging out message", async () => {
         await appNavbarPresenter.logOut(authToken);
-        verify(mockAppNavbarView.displayInfoMessage("Logging Out...", 0)).once()
+        verify(mockAppNavbarView.displayInfoMessage("Logging Out...", 0)).once();
     });
 
     it("calls logout on the user service with the correct auth token", async () => {
