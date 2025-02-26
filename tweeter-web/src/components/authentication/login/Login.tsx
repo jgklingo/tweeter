@@ -10,6 +10,7 @@ import { LoginPresenter, LoginView } from "../../../presenters/LoginPresenter";
 
 interface Props {
     originalUrl?: string;
+    presenter?: LoginPresenter;
 }
 
 const Login = (props: Props) => {
@@ -43,7 +44,7 @@ const Login = (props: Props) => {
         setIsLoading: setIsLoading
     }
 
-    const [presenter] = useState(new LoginPresenter(listener));
+    const [presenter] = useState(props.presenter ?? new LoginPresenter(listener));
 
     const inputFieldGenerator = () => {
         return (
