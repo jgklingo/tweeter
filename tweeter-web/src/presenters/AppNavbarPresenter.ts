@@ -7,16 +7,14 @@ export interface AppNavbarView extends MessageView {
 }
 
 export class AppNavbarPresenter extends ErrorPresenter<AppNavbarView> {
-    private _userService: UserService | null = null;
+    private _userService: UserService;
 
     public constructor(view: AppNavbarView) {
         super(view);
+        this._userService = new UserService();
     }
 
     public get userService() {
-        if (this._userService == null) {
-            this._userService = new UserService();
-        }
         return this._userService;
     }
 
