@@ -8,8 +8,10 @@ import { PostStatusPresenter } from "../../../src/presenters/PostStatusPresenter
 import { AuthToken, User } from "tweeter-shared";
 import useUserInfo from "../../../src/components/userInfo/UserInfoHook"
 
-const testUser = new User("Test", "User", "testUser", "/");
-const authToken = new AuthToken("abc123", 0);
+const mockUser = mock<User>();
+const mockUserInstance = instance(mockUser);
+const mockAuthToken = mock<AuthToken>();
+const mockAuthTokenInstance = instance(mockAuthToken);
 
 jest.mock("../../../src/components/userInfo/UserInfoHook", () => ({
     ...jest.requireActual("../../../src/components/userInfo/UserInfoHook"),
@@ -19,8 +21,8 @@ jest.mock("../../../src/components/userInfo/UserInfoHook", () => ({
 
 beforeAll(() => {
     (useUserInfo as jest.Mock).mockReturnValue({
-        currentUser: testUser,
-        authToken: authToken,
+        currentUser: mockUserInstance,
+        authToken: mockAuthTokenInstance,
     });
 });
 
@@ -57,7 +59,7 @@ describe("PostStatus", () => {
         const { textField, postStatusButton, user } = getPostStatus(mockPresenterInstance);
         await user.type(textField, postContent);
         await user.click(postStatusButton);
-        verify(mockPresenter.submitPost(postContent, testUser, authToken)).once();
+        verify(mockPresenter.submitPost(postContent, mockUserInstance, mockAuthTokenInstance)).once();
     });
 });
 
