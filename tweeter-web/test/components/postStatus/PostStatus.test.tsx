@@ -1,12 +1,12 @@
-import { MemoryRouter } from "react-router-dom";
 import PostStatus from "../../../src/components/postStatus/PostStatus"
 import { render, screen } from "@testing-library/react";
 import React from "react";
 import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
-import { mock, instance, verify, anything } from "@typestrong/ts-mockito";
+import { mock, instance, verify } from "@typestrong/ts-mockito";
 import { PostStatusPresenter } from "../../../src/presenters/PostStatusPresenter";
 import { AuthToken, User } from "tweeter-shared";
+import useUserInfo from "../../../src/components/userInfo/UserInfoHook"
 
 const testUser = new User("Test", "User", "testUser", "/");
 const authToken = new AuthToken("abc123", 0);
@@ -14,21 +14,17 @@ const authToken = new AuthToken("abc123", 0);
 jest.mock("../../../src/components/userInfo/UserInfoHook", () => ({
     ...jest.requireActual("../../../src/components/userInfo/UserInfoHook"),
     __esModule: true,
-    default: jest.fn(() => {
-        return {
-            currentUser: testUser,
-            authToken: authToken,
-        }
-    }),
+    default: jest.fn(),
 }));
 
+beforeAll(() => {
+    (useUserInfo as jest.Mock).mockReturnValue({
+        currentUser: testUser,
+        authToken: authToken,
+    });
+});
+
 describe("PostStatus", () => {
-    // beforeAll(() => {
-    //     (useUserInfo as jest.Mock).mockReturnValue({
-    //         currentUser: mockUserInstance,
-    //         authToken: mockAuthTokenInstance,
-    //     });
-    // });
     it("starts with the Post Status and Clear buttons disabled", () => {
         const { postStatusButton, clearButton } = getPostStatus();
         expect(postStatusButton).toBeDisabled();
