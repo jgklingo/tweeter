@@ -19,7 +19,7 @@ export type { ItemActionRequest } from "./model/net/request/ItemActionRequest"
 // Responses
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 export type { PagedItemResponse } from "./model/net/response/PagedItemResponse";
-export type { UserActionResponse } from "./model/net/response/UserActionResponse"
+export type { PrimitiveResponse } from "./model/net/response/PrimitiveResponse";
 
 // Other
 export { FakeData } from "./util/FakeData";

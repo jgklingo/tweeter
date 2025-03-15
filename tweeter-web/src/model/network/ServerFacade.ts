@@ -3,7 +3,7 @@ import {
     PagedItemRequest,
     PagedItemResponse,
     User,
-    UserActionResponse,
+    PrimitiveResponse,
     UserDto,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
@@ -80,11 +80,11 @@ export class ServerFacade {
     }
 
     public async follow(request: ItemActionRequest<UserDto>): Promise<[followerCount: number, followeeCount: number]> {
-        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, UserActionResponse>(request, "/follow");
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<[followerCount: number, followeeCount: number]>>(request, "/follow");
 
         // Handle errors    
         if (response.success) {
-            return response.countTuple;
+            return response.primitive;
         } else {
             console.error(response);
             let message: string;
@@ -98,11 +98,11 @@ export class ServerFacade {
     }
 
     public async unfollow(request: ItemActionRequest<UserDto>): Promise<[followerCount: number, followeeCount: number]> {
-        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, UserActionResponse>(request, "/unfollow");
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<[followerCount: number, followeeCount: number]>>(request, "/unfollow");
 
         // Handle errors    
         if (response.success) {
-            return response.countTuple;
+            return response.primitive;
         } else {
             console.error(response);
             let message: string;

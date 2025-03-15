@@ -1,4 +1,4 @@
-import { AuthToken, User, FakeData, UserDto } from "tweeter-shared";
+import { User, FakeData, UserDto } from "tweeter-shared";
 
 export class FollowService {
     public async loadMoreFollowers(
@@ -40,23 +40,23 @@ export class FollowService {
     };
 
     public async getFollowerCount(
-        authToken: string,
+        token: string,
         user: UserDto
     ): Promise<number> {
         return FakeData.instance.getFollowerCount(user.alias);
     };
 
     public async getFolloweeCount(
-        authToken: string,
+        token: string,
         user: UserDto
     ): Promise<number> {
         return FakeData.instance.getFolloweeCount(user.alias);
     };
 
     public async getIsFollowerStatus(
-        authToken: string,
+        token: string,
         user: UserDto,
-        selectedUser: User
+        selectedUser: UserDto
     ): Promise<boolean> {
         return FakeData.instance.isFollower();
     };
