@@ -1,7 +1,9 @@
 import {
+    ItemActionRequest,
     PagedItemRequest,
     PagedItemResponse,
     User,
+    UserActionResponse,
     UserDto,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
@@ -65,6 +67,42 @@ export class ServerFacade {
             } else {
                 return [items, response.hasMore];
             }
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async follow(request: ItemActionRequest<UserDto>): Promise<[followerCount: number, followeeCount: number]> {
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, UserActionResponse>(request, "/follow");
+
+        // Handle errors    
+        if (response.success) {
+            return response.countTuple;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async unfollow(request: ItemActionRequest<UserDto>): Promise<[followerCount: number, followeeCount: number]> {
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, UserActionResponse>(request, "/unfollow");
+
+        // Handle errors    
+        if (response.success) {
+            return response.countTuple;
         } else {
             console.error(response);
             let message: string;
