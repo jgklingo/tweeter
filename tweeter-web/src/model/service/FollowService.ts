@@ -1,4 +1,4 @@
-import { AuthToken, User, FakeData, PagedUserItemRequest } from "tweeter-shared";
+import { AuthToken, User, FakeData, PagedItemRequest, UserDto } from "tweeter-shared";
 import { ServerFacade } from "../network/ServerFacade";
 
 export class FollowService {
@@ -10,7 +10,7 @@ export class FollowService {
         pageSize: number,
         lastItem: User | null
     ): Promise<[User[], boolean]> {
-        const req: PagedUserItemRequest = {
+        const req: PagedItemRequest<UserDto> = {
             token: authToken.token,
             userAlias: userAlias,
             pageSize: pageSize,
@@ -25,7 +25,7 @@ export class FollowService {
         pageSize: number,
         lastItem: User | null
     ): Promise<[User[], boolean]> {
-        const req: PagedUserItemRequest = {
+        const req: PagedItemRequest<UserDto> = {
             token: authToken.token,
             userAlias: userAlias,
             pageSize: pageSize,
