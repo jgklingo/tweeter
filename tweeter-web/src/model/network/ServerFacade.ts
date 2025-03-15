@@ -114,4 +114,40 @@ export class ServerFacade {
             throw new Error(message);
         }
     }
+
+    public async getFolloweeCount(request: ItemActionRequest<UserDto>): Promise<number> {
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<number>>(request, "/followee/count");
+
+        // Handle errors    
+        if (response.success) {
+            return response.primitive;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async getFollowerCount(request: ItemActionRequest<UserDto>): Promise<number> {
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<number>>(request, "/follower/count");
+
+        // Handle errors    
+        if (response.success) {
+            return response.primitive;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
 }
