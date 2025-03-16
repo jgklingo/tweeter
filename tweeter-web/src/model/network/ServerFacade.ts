@@ -6,6 +6,8 @@ import {
     PrimitiveResponse,
     UserDto,
     IsFollowerRequest,
+    StatusDto,
+    Status,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -158,6 +160,33 @@ export class ServerFacade {
         // Handle errors    
         if (response.success) {
             return response.primitive;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async getMoreFeedItems(request: PagedItemRequest<StatusDto>): Promise<[Status[], boolean]> {
+        const response = await this.clientCommunicator.doPost<PagedItemRequest<StatusDto>, PagedItemResponse<StatusDto>>(request, "/feed/list");
+
+        const items: Status[] | null =
+            response.success && response.items
+                ? response.items.map((dto) => Status.fromDto(dto) as Status)
+                : null;
+
+        // Handle errors    
+        if (response.success) {
+            if (items == null) {
+                throw new Error(`No feed items found`);
+            } else {
+                return [items, response.hasMore];
+            }
         } else {
             console.error(response);
             let message: string;
