@@ -5,6 +5,7 @@ import {
     User,
     PrimitiveResponse,
     UserDto,
+    IsFollowerRequest,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -135,6 +136,24 @@ export class ServerFacade {
 
     public async getFollowerCount(request: ItemActionRequest<UserDto>): Promise<number> {
         const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<number>>(request, "/follower/count");
+
+        // Handle errors    
+        if (response.success) {
+            return response.primitive;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async getIsFollowerStatus(request: IsFollowerRequest): Promise<boolean> {
+        const response = await this.clientCommunicator.doPost<IsFollowerRequest, PrimitiveResponse<boolean>>(request, "/follower/isfollower");
 
         // Handle errors    
         if (response.success) {
