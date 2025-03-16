@@ -1,4 +1,4 @@
-// All classes that should be avaialble to other modules need to exported here. export * does not work when 
+// All classes that should be available to other modules need to exported here. export * does not work when 
 // uploading to lambda. Instead we have to list each export.
 
 // Domain Classes
@@ -14,7 +14,8 @@ export type { UserDto } from "./model/dto/UserDto";
 // Requests
 export type { TweeterRequest } from "./model/net/request/TweeterRequest";
 export type { PagedItemRequest } from "./model/net/request/PagedItemRequest";
-export type { ItemActionRequest } from "./model/net/request/ItemActionRequest"
+export type { ItemActionRequest } from "./model/net/request/ItemActionRequest";
+export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest";
 
 // Responses
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
