@@ -7,18 +7,17 @@ export class StatusService {
         pageSize: number,
         lastItem: StatusDto | null
     ): Promise<[StatusDto[], boolean]> {
-        return this.getFakeData(lastItem, pageSize)
+        return this.getFakeData(lastItem, pageSize);
     };
 
-    // public async loadMoreStoryItems(
-    //     authToken: AuthToken,
-    //     userAlias: string,
-    //     pageSize: number,
-    //     lastItem: Status | null
-    // ): Promise<[Status[], boolean]> {
-    //     // TODO: Replace with the result of calling server
-    //     return FakeData.instance.getPageOfStatuses(lastItem, pageSize);
-    // };
+    public async loadMoreStoryItems(
+        token: string,
+        userAlias: string,
+        pageSize: number,
+        lastItem: StatusDto | null
+    ): Promise<[StatusDto[], boolean]> {
+        return this.getFakeData(lastItem, pageSize);
+    };
 
     // public async postStatus(
     //     authToken: AuthToken,
