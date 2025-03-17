@@ -23,6 +23,7 @@ export type { IsFollowerRequest } from "./model/net/request/IsFollowerRequest";
 export type { TweeterResponse } from "./model/net/response/TweeterResponse";
 export type { PagedItemResponse } from "./model/net/response/PagedItemResponse";
 export type { PrimitiveResponse } from "./model/net/response/PrimitiveResponse";
+export type { GetUserResponse } from "./model/net/response/GetUserResponse";
 
 // Other
 export { FakeData } from "./util/FakeData";
