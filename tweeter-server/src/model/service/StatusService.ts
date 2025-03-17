@@ -24,6 +24,7 @@ export class StatusService {
         newStatus: StatusDto
     ): Promise<void> {
         // TODO: Post the status
+        return;
     };
 
     private async getFakeData(lastItem: StatusDto | null, limit: number): Promise<[StatusDto[], boolean]> {

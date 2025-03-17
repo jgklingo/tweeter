@@ -9,6 +9,7 @@ import {
     StatusDto,
     Status,
     TweeterResponse,
+    TweeterRequest,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -228,7 +229,25 @@ export class ServerFacade {
     }
 
     public async postStatus(request: ItemActionRequest<StatusDto>): Promise<void> {
-        const response = await this.clientCommunicator.doPost<ItemActionRequest<StatusDto>, TweeterResponse>(request, "/poststatus")
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<StatusDto>, TweeterResponse>(request, "/poststatus");
+
+        // Handle errors    
+        if (response.success) {
+            return;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async logout(request: TweeterRequest): Promise<void> {
+        const response = await this.clientCommunicator.doPost<TweeterRequest, TweeterResponse>(request, "/logout");
 
         // Handle errors    
         if (response.success) {

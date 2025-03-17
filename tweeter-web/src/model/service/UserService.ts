@@ -1,10 +1,15 @@
-import { AuthToken, FakeData, User } from "tweeter-shared";
+import { AuthToken, FakeData, TweeterRequest, User } from "tweeter-shared";
 import { Buffer } from "buffer";
+import { ServerFacade } from "../network/ServerFacade";
 
 export class UserService {
+    private serverFacade = new ServerFacade();
+
     public async logout(authToken: AuthToken): Promise<void> {
-        // Pause so we can see the logging out message. Delete when the call to the server is implemented.
-        await new Promise((res) => setTimeout(res, 1000));
+        const request: TweeterRequest = {
+            token: authToken.token
+        }
+        return this.serverFacade.logout(request);
     };
 
     public async login(
