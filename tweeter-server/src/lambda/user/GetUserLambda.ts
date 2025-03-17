@@ -8,6 +8,6 @@ export const handler = async (request: ItemActionRequest<string>): Promise<GetUs
     return {
         success: true,
         message: null,
-        user: user
+        user: user == null ? null : user.dto
     }
 }

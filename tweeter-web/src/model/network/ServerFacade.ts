@@ -10,6 +10,7 @@ import {
     Status,
     TweeterResponse,
     TweeterRequest,
+    GetUserResponse,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -252,6 +253,26 @@ export class ServerFacade {
         // Handle errors    
         if (response.success) {
             return;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async getUser(request: ItemActionRequest<string>): Promise<User | null> {
+        const response = await this.clientCommunicator.doPost<ItemActionRequest<string>, GetUserResponse>(request, "/getuser");
+
+        const user = response.user == null ? null : User.fromDto(response.user);
+
+        // Handle errors    
+        if (response.success) {
+            return user;
         } else {
             console.error(response);
             let message: string;
