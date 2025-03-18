@@ -1,4 +1,4 @@
-import { AuthToken, FakeData, ItemActionRequest, LoginRequest, RegisterRequest, TweeterRequest, User } from "tweeter-shared";
+import { AuthToken, ItemActionRequest, LoginRequest, RegisterRequest, TweeterRequest, User } from "tweeter-shared";
 import { Buffer } from "buffer";
 import { ServerFacade } from "../network/ServerFacade";
 
