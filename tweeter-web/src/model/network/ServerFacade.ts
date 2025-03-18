@@ -32,28 +32,14 @@ export class ServerFacade {
         >(request, "/followee/list");
 
         // Convert the UserDto array returned by ClientCommunicator to a User array
-        const items: User[] | null =
+        let items: User[] | null =
             response.success && response.items
                 ? response.items.map((dto) => User.fromDto(dto) as User)
                 : null;
 
-        // Handle errors    
-        if (response.success) {
-            if (items == null) {
-                throw new Error(`No followees found`);
-            } else {
-                return [items, response.hasMore];
-            }
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        items = this.handleNoDataError(items, "followees");
+        return [items, response.hasMore];
     }
 
     public async getMoreFollowers(
@@ -65,208 +51,90 @@ export class ServerFacade {
         >(request, "/follower/list");
 
         // Convert the UserDto array returned by ClientCommunicator to a User array
-        const items: User[] | null =
+        let items: User[] | null =
             response.success && response.items
                 ? response.items.map((dto) => User.fromDto(dto) as User)
                 : null;
 
-        // Handle errors    
-        if (response.success) {
-            if (items == null) {
-                throw new Error(`No followers found`);
-            } else {
-                return [items, response.hasMore];
-            }
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        items = this.handleNoDataError(items, "followers");
+        return [items, response.hasMore];
     }
 
     public async follow(request: ItemActionRequest<UserDto>): Promise<[followerCount: number, followeeCount: number]> {
         const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<[followerCount: number, followeeCount: number]>>(request, "/follow");
 
-        // Handle errors    
-        if (response.success) {
-            return response.primitive;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return response.primitive;
     }
 
     public async unfollow(request: ItemActionRequest<UserDto>): Promise<[followerCount: number, followeeCount: number]> {
         const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<[followerCount: number, followeeCount: number]>>(request, "/unfollow");
 
-        // Handle errors    
-        if (response.success) {
-            return response.primitive;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return response.primitive;
     }
 
     public async getFolloweeCount(request: ItemActionRequest<UserDto>): Promise<number> {
         const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<number>>(request, "/followee/count");
 
-        // Handle errors    
-        if (response.success) {
-            return response.primitive;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return response.primitive;
     }
 
     public async getFollowerCount(request: ItemActionRequest<UserDto>): Promise<number> {
         const response = await this.clientCommunicator.doPost<ItemActionRequest<UserDto>, PrimitiveResponse<number>>(request, "/follower/count");
 
-        // Handle errors    
-        if (response.success) {
-            return response.primitive;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return response.primitive;
     }
 
     public async getIsFollowerStatus(request: IsFollowerRequest): Promise<boolean> {
         const response = await this.clientCommunicator.doPost<IsFollowerRequest, PrimitiveResponse<boolean>>(request, "/follower/isfollower");
 
-        // Handle errors    
-        if (response.success) {
-            return response.primitive;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return response.primitive;
     }
 
     public async getMoreFeedItems(request: PagedItemRequest<StatusDto>): Promise<[Status[], boolean]> {
         const response = await this.clientCommunicator.doPost<PagedItemRequest<StatusDto>, PagedItemResponse<StatusDto>>(request, "/feed/list");
 
-        const items: Status[] | null =
+        let items: Status[] | null =
             response.success && response.items
                 ? response.items.map((dto) => Status.fromDto(dto) as Status)
                 : null;
 
-        // Handle errors    
-        if (response.success) {
-            if (items == null) {
-                throw new Error(`No feed items found`);
-            } else {
-                return [items, response.hasMore];
-            }
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        items = this.handleNoDataError(items, "feed items");
+        return [items, response.hasMore];
     }
 
     public async getMoreStoryItems(request: PagedItemRequest<StatusDto>): Promise<[Status[], boolean]> {
         const response = await this.clientCommunicator.doPost<PagedItemRequest<StatusDto>, PagedItemResponse<StatusDto>>(request, "/story/list");
 
-        const items: Status[] | null =
+        let items: Status[] | null =
             response.success && response.items
                 ? response.items.map((dto) => Status.fromDto(dto) as Status)
                 : null;
 
-        // Handle errors    
-        if (response.success) {
-            if (items == null) {
-                throw new Error(`No story items found`);
-            } else {
-                return [items, response.hasMore];
-            }
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        items = this.handleNoDataError(items, "story items");
+        return [items, response.hasMore];
+
     }
 
     public async postStatus(request: ItemActionRequest<StatusDto>): Promise<void> {
         const response = await this.clientCommunicator.doPost<ItemActionRequest<StatusDto>, TweeterResponse>(request, "/poststatus");
 
-        // Handle errors    
-        if (response.success) {
-            return;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return;
     }
 
     public async logout(request: TweeterRequest): Promise<void> {
         const response = await this.clientCommunicator.doPost<TweeterRequest, TweeterResponse>(request, "/logout");
 
-        // Handle errors    
-        if (response.success) {
-            return;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return;
     }
 
     public async getUser(request: ItemActionRequest<string>): Promise<User | null> {
@@ -274,28 +142,26 @@ export class ServerFacade {
 
         const user = response.user == null ? null : User.fromDto(response.user);
 
-        // Handle errors    
-        if (response.success) {
-            return user;
-        } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
-        }
+        this.handleResponseError(response);
+        return user;
     }
 
     public async login(request: LoginRequest): Promise<[User, AuthToken]> {
         const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/login");
 
-        // Handle errors    
-        if (response.success) {
-            return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
-        } else {
+        this.handleResponseError(response);
+        return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
+    }
+
+    public async register(request: RegisterRequest): Promise<[User, AuthToken]> {
+        const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/register");
+
+        this.handleResponseError(response);
+        return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
+    }
+
+    private handleResponseError(response: TweeterResponse) {
+        if (!response.success) {
             console.error(response);
             let message: string;
             if (response.message !== null) {
@@ -307,21 +173,11 @@ export class ServerFacade {
         }
     }
 
-    public async register(request: RegisterRequest): Promise<[User, AuthToken]> {
-        const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/register");
-
-        // Handle errors    
-        if (response.success) {
-            return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
+    private handleNoDataError<T>(items: Array<T> | null, itemDescription: string): Array<T> {
+        if (items == null) {
+            throw new Error(`No ${itemDescription} found`);
         } else {
-            console.error(response);
-            let message: string;
-            if (response.message !== null) {
-                message = response.message;
-            } else {
-                message = "No error message returned."
-            }
-            throw new Error(message);
+            return items;
         }
     }
 }
