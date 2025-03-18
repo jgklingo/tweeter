@@ -11,6 +11,10 @@ import {
     TweeterResponse,
     TweeterRequest,
     GetUserResponse,
+    LoginRequest,
+    LoginResponse,
+    RegisterRequest,
+    AuthToken,
 } from "tweeter-shared";
 import { ClientCommunicator } from "./ClientCommunicator";
 
@@ -273,6 +277,42 @@ export class ServerFacade {
         // Handle errors    
         if (response.success) {
             return user;
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async login(request: LoginRequest): Promise<[User, AuthToken]> {
+        const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/login");
+
+        // Handle errors    
+        if (response.success) {
+            return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
+        } else {
+            console.error(response);
+            let message: string;
+            if (response.message !== null) {
+                message = response.message;
+            } else {
+                message = "No error message returned."
+            }
+            throw new Error(message);
+        }
+    }
+
+    public async register(request: RegisterRequest): Promise<[User, AuthToken]> {
+        const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/register");
+
+        // Handle errors    
+        if (response.success) {
+            return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
         } else {
             console.error(response);
             let message: string;
