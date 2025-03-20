@@ -9,6 +9,7 @@ export const handler = async (request: LoginRequest): Promise<LoginResponse> => 
         success: true,
         message: null,
         user: user.dto,
-        token: token.token
+        token: token.token,
+        timestamp: token.timestamp
     }
 }

@@ -150,14 +150,14 @@ export class ServerFacade {
         const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/login");
 
         this.handleResponseError(response);
-        return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
+        return [User.fromDto(response.user)!, new AuthToken(response.token, response.timestamp)];
     }
 
     public async register(request: RegisterRequest): Promise<[User, AuthToken]> {
         const response = await this.clientCommunicator.doPost<LoginRequest, LoginResponse>(request, "/register");
 
         this.handleResponseError(response);
-        return [User.fromDto(response.user)!, new AuthToken(response.token, 0)]; // TODO: check this line
+        return [User.fromDto(response.user)!, new AuthToken(response.token, response.timestamp)];
     }
 
     private handleResponseError(response: TweeterResponse) {
