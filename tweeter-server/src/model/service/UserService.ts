@@ -1,29 +1,36 @@
 import { AuthToken, FakeData, User } from "tweeter-shared";
-import { Buffer } from "buffer";
+import { hash, compare } from "bcryptjs";
 import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { UserImageDao } from "../dao/interface/UserImageDao";
+import { UsersDao } from "../dao/interface/UsersDao";
+import { SessionsDao } from "../dao/interface/SessionsDao";
 
 export class UserService {
+    private readonly AUTH_TOKEN_LIFETIME = 8640000;
+
     private daoFactory: AbstractDaoFactory = new AWSDaoFactory();
     private userImageDao: UserImageDao = this.daoFactory.getUserImageDao();
+    private usersDao: UsersDao = this.daoFactory.getUsersDao();
+    private sessionsDao: SessionsDao = this.daoFactory.getSessionsDao();
 
     public async logout(token: string): Promise<void> {
-        // TODO: Log out
-        return;
+        await this.sessionsDao.delete(token);
     };
 
     public async login(
         alias: string,
         password: string
     ): Promise<[User, AuthToken]> {
-        const user = FakeData.instance.firstUser;
-
-        if (user === null) {
-            throw new Error("Invalid alias or password");
+        const [user, hashedPassword] = await this.checkUser(alias);
+        if (!await compare(password, hashedPassword)) {
+            throw new Error("[Bad Request] Password incorrect");
         }
 
-        return [user, FakeData.instance.authToken];
+        const authToken = AuthToken.Generate();
+        await this.sessionsDao.insert(authToken, alias);
+
+        return [user, authToken];
     };
 
     public async register(
@@ -34,24 +41,48 @@ export class UserService {
         imageStringBase64: string,
         imageFileExtension: string
     ): Promise<[User, AuthToken]> {
-        // const userImageBytes: Uint8Array = Buffer.from(imageStringBase64, "base64"); // not needed?
+        // TODO: check if user already exists?
 
         const userImageUrl = await this.userImageDao.insert(`${alias}.${imageFileExtension}`, imageStringBase64);
-        console.log(userImageUrl);
 
-        const user = FakeData.instance.firstUser;
+        const user = new User(firstName, lastName, alias, userImageUrl);
+        const hashedPassword = await hash(password, 10);
+        await this.usersDao.insert(user, hashedPassword);
 
-        if (user === null) {
-            throw new Error("Invalid registration");
-        }
+        const authToken = AuthToken.Generate();
+        await this.sessionsDao.insert(authToken, alias);
 
-        return [user, FakeData.instance.authToken];
+        return [user, authToken];
     };
 
     public async getUser(
         token: string,
         alias: string
     ): Promise<User | null> {
-        return FakeData.instance.findUserByAlias(alias);
+        await this.checkToken(token, alias);
+        const [user] = await this.checkUser(alias);
+        return user;
     };
+
+    public async checkToken(token: string, alias: string) {
+        const result = await this.sessionsDao.getByToken(token);
+        if (result == null) {
+            throw new Error("[Bad Request] Token not found");
+        }
+        const [authToken, tokenAlias] = result;
+        if (authToken.timestamp < Date.now() - this.AUTH_TOKEN_LIFETIME) {
+            throw new Error("[Bad Request] Token expired");
+        }
+        if (tokenAlias !== alias) {
+            throw new Error("[Bad Request] Token does not match user");
+        }
+    }
+
+    private async checkUser(alias: string) {
+        const result = await this.usersDao.getByHandle(alias);
+        if (result == null) {
+            throw new Error("[Bad Request] User not found");
+        }
+        return result;
+    }
 }

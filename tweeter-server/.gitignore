@@ -3,4 +3,4 @@
 /nodejs
 .server
 *.zip
-*.ignore
+*.ignore.*
