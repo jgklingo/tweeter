@@ -76,6 +76,7 @@ export class UserService {
         if (tokenAlias !== alias) {
             throw new Error("[Bad Request] Token does not match user");
         }
+        await this.sessionsDao.update(token, Date.now());
     }
 
     private async checkUser(alias: string) {

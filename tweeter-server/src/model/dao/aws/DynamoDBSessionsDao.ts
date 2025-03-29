@@ -1,4 +1,4 @@
-import { PutCommand, DynamoDBDocumentClient, GetCommand, DeleteCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, DynamoDBDocumentClient, GetCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { SessionsDao } from "../interface/SessionsDao";
 import { AuthToken } from "tweeter-shared";
@@ -47,5 +47,23 @@ export class DynamoDBSessionsDao implements SessionsDao {
             }
         };
         await this.client.send(new DeleteCommand(params));
+    }
+
+    public async update(token: string, timestamp: number) {
+        const authToken = new AuthToken(token, timestamp);
+        const params = {
+            TableName: this.tableName,
+            Key: {
+                [this.tokenAttr]: token
+            },
+            UpdateExpression: "SET #authTokenJson = :authTokenJson",
+            ExpressionAttributeName: {
+                "#authTokenJson": this.authTokenJsonAttr
+            },
+            ExpressionAttributeValues: {
+                ":authTokenJson": authToken.toJson()
+            }
+        };
+        await this.client.send(new UpdateCommand(params));
     }
 }
