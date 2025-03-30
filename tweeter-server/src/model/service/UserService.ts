@@ -59,22 +59,19 @@ export class UserService {
         token: string,
         alias: string
     ): Promise<User | null> {
-        await this.checkToken(token, alias);
+        await this.checkToken(token);
         const [user] = await this.checkUser(alias);
         return user;
     };
 
-    public async checkToken(token: string, alias: string) {
+    public async checkToken(token: string) {
         const result = await this.sessionsDao.getByToken(token);
         if (result == null) {
             throw new Error("[Bad Request] Token not found");
         }
-        const [authToken, tokenAlias] = result;
+        const [authToken] = result;
         if (authToken.timestamp < Date.now() - this.AUTH_TOKEN_LIFETIME) {
             throw new Error("[Bad Request] Token expired");
-        }
-        if (tokenAlias !== alias) {
-            throw new Error("[Bad Request] Token does not match user");
         }
         await this.sessionsDao.update(token, Date.now());
     }

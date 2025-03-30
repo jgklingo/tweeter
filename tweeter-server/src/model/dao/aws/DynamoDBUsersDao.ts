@@ -1,7 +1,7 @@
-import { PutCommand, DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
 import { UsersDao } from "../interface/UsersDao";
 import { User } from "tweeter-shared";
+import { DynamoDBClientLoader } from "./DynamoDBClientLoader";
 
 export class DynamoDBUsersDao implements UsersDao {
     readonly tableName = "users";
@@ -9,7 +9,7 @@ export class DynamoDBUsersDao implements UsersDao {
     readonly userDtoAttr = "user_dto";
     readonly hashedPasswordAttr = "hashed_password";
 
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
+    private readonly client = DynamoDBClientLoader.getInstance().documentClient;
 
     public async insert(user: User, hashedPassword: string) {
         const params = {

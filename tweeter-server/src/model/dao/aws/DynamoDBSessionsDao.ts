@@ -1,7 +1,7 @@
-import { PutCommand, DynamoDBDocumentClient, GetCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
-import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { PutCommand, GetCommand, DeleteCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { SessionsDao } from "../interface/SessionsDao";
 import { AuthToken } from "tweeter-shared";
+import { DynamoDBClientLoader } from "./DynamoDBClientLoader";
 
 export class DynamoDBSessionsDao implements SessionsDao {
     readonly tableName = "sessions";
@@ -9,7 +9,7 @@ export class DynamoDBSessionsDao implements SessionsDao {
     readonly authTokenJsonAttr = "auth_token_json";
     readonly handleAttr = "handle";
 
-    private readonly client = DynamoDBDocumentClient.from(new DynamoDBClient());
+    private readonly client = DynamoDBClientLoader.getInstance().documentClient;
 
     public async insert(authToken: AuthToken, userHandle: string) {
         const params = {
@@ -57,7 +57,7 @@ export class DynamoDBSessionsDao implements SessionsDao {
                 [this.tokenAttr]: token
             },
             UpdateExpression: "SET #authTokenJson = :authTokenJson",
-            ExpressionAttributeName: {
+            ExpressionAttributeNames: {
                 "#authTokenJson": this.authTokenJsonAttr
             },
             ExpressionAttributeValues: {
