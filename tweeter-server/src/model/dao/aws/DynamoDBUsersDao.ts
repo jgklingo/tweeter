@@ -1,4 +1,4 @@
-import { PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, GetCommand, BatchGetCommand } from "@aws-sdk/lib-dynamodb";
 import { UsersDao } from "../interface/UsersDao";
 import { User } from "tweeter-shared";
 import { DynamoDBClientLoader } from "./DynamoDBClientLoader";
@@ -37,5 +37,33 @@ export class DynamoDBUsersDao implements UsersDao {
         const user = User.fromDto(output.Item[this.userDtoAttr]);
         const hashedPassword = output.Item[this.hashedPasswordAttr];
         return [user, hashedPassword] as [User, string];
+    }
+
+    public async getBatch(handles: string[]) {
+        const keys = handles.map(handle => ({ [this.handleAttr]: handle }));
+        const params = {
+            RequestItems: {
+                [this.tableName]: {
+                    Keys: keys
+                }
+            }
+        };
+        const output = await this.client.send(new BatchGetCommand(params));
+
+        const items: User[] = [];
+        output.Responses?.[this.tableName]?.forEach((item) => {
+            items.push(User.fromDto(item[this.userDtoAttr])!)
+        })
+
+        let unprocessed = output.UnprocessedKeys;
+        while (unprocessed && Object.keys(unprocessed).length > 0) {
+            const retryOutput = await this.client.send(new BatchGetCommand({ RequestItems: unprocessed }));
+            retryOutput.Responses?.[this.tableName]?.forEach((item) => {
+                items.push(User.fromDto(item[this.userDtoAttr])!)
+            })
+            unprocessed = retryOutput.UnprocessedKeys;
+        }
+
+        return items;
     }
 }

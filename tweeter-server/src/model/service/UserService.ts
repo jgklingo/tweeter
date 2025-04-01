@@ -1,18 +1,19 @@
-import { AuthToken, FakeData, User } from "tweeter-shared";
+import { AuthToken, User } from "tweeter-shared";
 import { hash, compare } from "bcryptjs";
 import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { UserImageDao } from "../dao/interface/UserImageDao";
 import { UsersDao } from "../dao/interface/UsersDao";
 import { SessionsDao } from "../dao/interface/SessionsDao";
+import { Authenticator } from "./Authenticator";
 
 export class UserService {
-    private readonly AUTH_TOKEN_LIFETIME = 8640000;
-
     private daoFactory: AbstractDaoFactory = new AWSDaoFactory();
     private userImageDao: UserImageDao = this.daoFactory.getUserImageDao();
     private usersDao: UsersDao = this.daoFactory.getUsersDao();
     private sessionsDao: SessionsDao = this.daoFactory.getSessionsDao();
+
+    private authenticator: Authenticator = new Authenticator(this.daoFactory);
 
     public async logout(token: string): Promise<void> {
         await this.sessionsDao.delete(token);
@@ -59,22 +60,10 @@ export class UserService {
         token: string,
         alias: string
     ): Promise<User | null> {
-        await this.checkToken(token);
+        await this.authenticator.checkToken(token);
         const [user] = await this.checkUser(alias);
         return user;
     };
-
-    public async checkToken(token: string) {
-        const result = await this.sessionsDao.getByToken(token);
-        if (result == null) {
-            throw new Error("[Bad Request] Token not found");
-        }
-        const [authToken] = result;
-        if (authToken.timestamp < Date.now() - this.AUTH_TOKEN_LIFETIME) {
-            throw new Error("[Bad Request] Token expired");
-        }
-        await this.sessionsDao.update(token, Date.now());
-    }
 
     private async checkUser(alias: string) {
         const result = await this.usersDao.getByHandle(alias);
