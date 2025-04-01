@@ -44,7 +44,8 @@ export class UserService {
     ): Promise<[User, AuthToken]> {
         // TODO: check if user already exists?
 
-        const userImageUrl = await this.userImageDao.insert(`${alias}.${imageFileExtension}`, imageStringBase64);
+        const imageFileName = `${alias.split('@')[1]}_${Date.now()}.${imageFileExtension}`
+        const userImageUrl = await this.userImageDao.insert(imageFileName, imageStringBase64);
 
         const user = new User(firstName, lastName, alias, userImageUrl);
         const hashedPassword = await hash(password, 10);
