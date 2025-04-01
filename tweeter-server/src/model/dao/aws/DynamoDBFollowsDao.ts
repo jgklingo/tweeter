@@ -1,4 +1,4 @@
-import { PutCommand, GetCommand, DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, GetCommand, DeleteCommand, QueryCommand, QueryCommandOutput } from "@aws-sdk/lib-dynamodb";
 import { Follow } from "tweeter-shared";
 import { FollowsDao } from "../interface/FollowsDao";
 import { DynamoDBClientLoader } from "./DynamoDBClientLoader";
@@ -44,17 +44,9 @@ export class DynamoDBFollowsDao implements FollowsDao {
                     }
         };
 
-        const items: Follow[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((item) =>
-            items.push(
-                new Follow(
-                    item[this.followerHandleAttr],
-                    item[this.followeeHandleAttr]
-                )
-            )
-        );
+        const items: Follow[] = this.queryToFollows(data);
 
         return [items, hasMorePages] as [Follow[], boolean];
     }
@@ -80,17 +72,10 @@ export class DynamoDBFollowsDao implements FollowsDao {
                     }
         };
 
-        const items: Follow[] = [];
         const data = await this.client.send(new QueryCommand(params));
         const hasMorePages = data.LastEvaluatedKey !== undefined;
-        data.Items?.forEach((item) =>
-            items.push(
-                new Follow(
-                    item[this.followerHandleAttr],
-                    item[this.followeeHandleAttr]
-                )
-            )
-        );
+        const items: Follow[] = this.queryToFollows(data);
+
         return [items, hasMorePages] as [Follow[], boolean];
     }
 
@@ -104,16 +89,8 @@ export class DynamoDBFollowsDao implements FollowsDao {
             IndexName: this.indexName,
         };
 
-        const items: Follow[] = [];
         const data = await this.client.send(new QueryCommand(params));
-        data.Items?.forEach((item) =>
-            items.push(
-                new Follow(
-                    item[this.followerHandleAttr],
-                    item[this.followeeHandleAttr]
-                )
-            )
-        );
+        const items: Follow[] = this.queryToFollows(data);
 
         return items;
     }
@@ -127,16 +104,8 @@ export class DynamoDBFollowsDao implements FollowsDao {
             TableName: this.tableName
         };
 
-        const items: Follow[] = [];
         const data = await this.client.send(new QueryCommand(params));
-        data.Items?.forEach((item) =>
-            items.push(
-                new Follow(
-                    item[this.followerHandleAttr],
-                    item[this.followeeHandleAttr]
-                )
-            )
-        );
+        const items: Follow[] = this.queryToFollows(data);
 
         return items;
     }
@@ -165,5 +134,18 @@ export class DynamoDBFollowsDao implements FollowsDao {
             }
         };
         await this.client.send(new DeleteCommand(params));
+    }
+
+    private queryToFollows(data: QueryCommandOutput) {
+        const items: Follow[] = [];
+        data.Items?.forEach((item) =>
+            items.push(
+                new Follow(
+                    item[this.followerHandleAttr],
+                    item[this.followeeHandleAttr]
+                )
+            )
+        );
+        return items;
     }
 }

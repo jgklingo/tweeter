@@ -51,8 +51,7 @@ export class FollowService {
         const [, userHandle] = await this.authenticator.checkToken(token);
         await this.followsDao.delete(new Follow(userHandle, userToUnfollow.alias));
 
-        const followerCount = (await this.followsDao.getAllFollowers(userToUnfollow.alias)).length;
-        const followeeCount = (await this.followsDao.getAllFollowees(userToUnfollow.alias)).length;
+        const [followerCount, followeeCount] = await this.getCounts(userToUnfollow.alias);
 
         return [followerCount, followeeCount];
     };
@@ -64,8 +63,7 @@ export class FollowService {
         const [, userHandle] = await this.authenticator.checkToken(token);
         await this.followsDao.insert(new Follow(userHandle, userToFollow.alias));
 
-        const followerCount = (await this.followsDao.getAllFollowers(userToFollow.alias)).length;
-        const followeeCount = (await this.followsDao.getAllFollowees(userToFollow.alias)).length;
+        const [followerCount, followeeCount] = await this.getCounts(userToFollow.alias);
 
         return [followerCount, followeeCount];
     };
@@ -95,4 +93,11 @@ export class FollowService {
         const follow = await this.followsDao.find(new Follow(user.alias, selectedUser.alias));
         return follow !== null;
     };
+
+    private async getCounts(alias: string): Promise<[followerCount: number, followeeCount: number]> {
+        const followerCount = (await this.followsDao.getAllFollowers(alias)).length;
+        const followeeCount = (await this.followsDao.getAllFollowees(alias)).length;
+
+        return [followerCount, followeeCount];
+    }
 }
