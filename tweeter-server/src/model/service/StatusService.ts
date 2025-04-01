@@ -1,4 +1,4 @@
-import { Status, StatusDto, FakeData } from "tweeter-shared";
+import { Status, StatusDto } from "tweeter-shared";
 import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { FollowsDao } from "../dao/interface/FollowsDao";
@@ -45,10 +45,4 @@ export class StatusService {
             await this.statusDao.insertFeedItem(followerHandle, Status.fromDto(newStatus)!); // batch write command for feed items?
         });
     };
-
-    private async getFakeData(lastItem: StatusDto | null, limit: number): Promise<[StatusDto[], boolean]> {
-        const [items, hasMore] = FakeData.instance.getPageOfStatuses(Status.fromDto(lastItem), limit);
-        const dtos = items.map((status: Status) => status.dto);
-        return [dtos, hasMore];
-    }
 }

@@ -29,4 +29,4 @@ export type { GetUserResponse } from "./model/net/response/GetUserResponse";
 export type { LoginResponse } from "./model/net/response/LoginResponse";
 
 // Other
-export { FakeData } from "./util/FakeData";
+// export { FakeData } from "./util/FakeData";
