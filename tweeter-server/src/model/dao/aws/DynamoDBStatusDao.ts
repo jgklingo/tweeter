@@ -20,6 +20,7 @@ export class DynamoDBStatusDao implements StatusDao {
                 ":f": authorHandle,
             },
             TableName: this.storyTableName,
+            ScanIndexForward: false,
             Limit: pageSize,
             ExclusiveStartKey:
                 lastItemTimestamp === undefined
@@ -47,6 +48,7 @@ export class DynamoDBStatusDao implements StatusDao {
                 ":f": feedOwnerHandle,
             },
             TableName: this.feedTableName,
+            ScanIndexForward: false,
             Limit: pageSize,
             ExclusiveStartKey:
                 lastItemTimestamp === undefined
