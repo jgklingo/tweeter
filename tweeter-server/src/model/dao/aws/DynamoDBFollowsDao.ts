@@ -1,4 +1,4 @@
-import { PutCommand, GetCommand, DeleteCommand, UpdateCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, GetCommand, DeleteCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { Follow } from "tweeter-shared";
 import { FollowsDao } from "../interface/FollowsDao";
 import { DynamoDBClientLoader } from "./DynamoDBClientLoader";

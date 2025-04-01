@@ -22,7 +22,7 @@ export class FollowService {
         const [followers, hasMore] = await this.followsDao.getPageOfFollowers(userAlias, pageSize, lastItem?.alias);
 
         const followerHandles = followers.map(follower => follower.followerHandle);
-        const users = await this.usersDao.getBatch(followerHandles);
+        const users = followerHandles.length > 0 ? await this.usersDao.getBatch(followerHandles) : [];
         const userDtos = users.map(user => user.dto);
 
         return [userDtos, hasMore] as [UserDto[], boolean];
@@ -38,7 +38,7 @@ export class FollowService {
         const [followees, hasMore] = await this.followsDao.getPageOfFollowees(userAlias, pageSize, lastItem?.alias);
 
         const followeeHandles = followees.map(followee => followee.followeeHandle);
-        const users = await this.usersDao.getBatch(followeeHandles);
+        const users = followeeHandles.length > 0 ? await this.usersDao.getBatch(followeeHandles) : [];
         const userDtos = users.map(user => user.dto);
 
         return [userDtos, hasMore] as [UserDto[], boolean];

@@ -1,5 +1,6 @@
 import { DynamoDBFollowsDao } from "../aws/DynamoDBFollowsDao";
 import { DynamoDBSessionsDao } from "../aws/DynamoDBSessionsDao";
+import { DynamoDBStatusDao } from "../aws/DynamoDBStatusDao";
 import { DynamoDBUsersDao } from "../aws/DynamoDBUsersDao";
 import { S3UserImageDao } from "../aws/S3UserImageDao";
 import { FollowsDao } from "../interface/FollowsDao";
@@ -21,5 +22,9 @@ export class AWSDaoFactory implements AbstractDaoFactory {
 
     public getFollowsDao() {
         return new DynamoDBFollowsDao();
+    }
+
+    public getStatusDao() {
+        return new DynamoDBStatusDao();
     }
 }
