@@ -20,6 +20,7 @@ export class Authenticator {
         }
         const [authToken] = result;
         if (authToken.timestamp < Date.now() - this.AUTH_TOKEN_LIFETIME) {
+            this.sessionsDao.delete(authToken.token);
             throw new Error("[Bad Request] Token expired");
         }
         await this.sessionsDao.update(token, Date.now());
