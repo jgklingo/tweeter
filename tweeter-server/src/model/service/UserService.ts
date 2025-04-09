@@ -5,7 +5,7 @@ import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { UserImageDao } from "../dao/interface/UserImageDao";
 import { UsersDao } from "../dao/interface/UsersDao";
 import { SessionsDao } from "../dao/interface/SessionsDao";
-import { Authenticator } from "./Authenticator";
+import { Authenticator } from "./helper/AuthenticationHelper";
 
 export class UserService {
     private daoFactory: AbstractDaoFactory = new AWSDaoFactory();

@@ -1,6 +1,6 @@
-import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
-import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
-import { SessionsDao } from "../dao/interface/SessionsDao";
+import { AbstractDaoFactory } from "../../dao/factory/AbstractDaoFactory";
+import { AWSDaoFactory } from "../../dao/factory/AWSDaoFactory";
+import { SessionsDao } from "../../dao/interface/SessionsDao";
 
 export class Authenticator {
     private readonly AUTH_TOKEN_LIFETIME = 8640000;

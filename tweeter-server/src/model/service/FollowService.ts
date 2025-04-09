@@ -2,7 +2,7 @@ import { UserDto, Follow } from "tweeter-shared";
 import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { UsersDao } from "../dao/interface/UsersDao";
-import { Authenticator } from "./Authenticator";
+import { Authenticator } from "./helper/AuthenticationHelper";
 import { FollowsDao } from "../dao/interface/FollowsDao";
 
 export class FollowService {

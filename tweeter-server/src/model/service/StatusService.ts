@@ -3,7 +3,7 @@ import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { FollowsDao } from "../dao/interface/FollowsDao";
 import { StatusDao } from "../dao/interface/StatusDao";
-import { Authenticator } from "./Authenticator";
+import { Authenticator } from "./helper/AuthenticationHelper";
 
 export class StatusService {
     private daoFactory: AbstractDaoFactory = new AWSDaoFactory();
