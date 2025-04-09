@@ -2,6 +2,7 @@ import { PutCommand, GetCommand, DeleteCommand, QueryCommand, QueryCommandOutput
 import { Follow } from "tweeter-shared";
 import { FollowsDao } from "../interface/FollowsDao";
 import { DynamoDBClientLoader } from "./DynamoDBClientLoader";
+import { Select } from "@aws-sdk/client-dynamodb";
 
 export class DynamoDBFollowsDao implements FollowsDao {
     readonly tableName = "follows";
@@ -79,6 +80,37 @@ export class DynamoDBFollowsDao implements FollowsDao {
         return [items, hasMorePages] as [Follow[], boolean];
     }
 
+    public async getNumFollowers(followeeHandle: string): Promise<number> {
+        const params = {
+            KeyConditionExpression: this.followeeHandleAttr + " = :f",
+            ExpressionAttributeValues: {
+                ":f": followeeHandle,
+            },
+            TableName: this.tableName,
+            IndexName: this.indexName,
+            Select: Select.COUNT
+        };
+
+        const data = await this.client.send(new QueryCommand(params));
+
+        return data.Count || 0;
+    }
+
+    public async getNumFollowees(followerHandle: string): Promise<number> {
+        const params = {
+            KeyConditionExpression: this.followerHandleAttr + " = :f",
+            ExpressionAttributeValues: {
+                ":f": followerHandle,
+            },
+            TableName: this.tableName,
+            Select: Select.COUNT
+        };
+
+        const data = await this.client.send(new QueryCommand(params));
+
+        return data.Count || 0;
+    }
+
     public async getAllFollowers(followeeHandle: string): Promise<Follow[]> {
         const params = {
             KeyConditionExpression: this.followeeHandleAttr + " = :f",
@@ -87,21 +119,6 @@ export class DynamoDBFollowsDao implements FollowsDao {
             },
             TableName: this.tableName,
             IndexName: this.indexName,
-        };
-
-        const data = await this.client.send(new QueryCommand(params));
-        const items: Follow[] = this.queryToFollows(data);
-
-        return items;
-    }
-
-    public async getAllFollowees(followerHandle: string): Promise<Follow[]> {
-        const params = {
-            KeyConditionExpression: this.followerHandleAttr + " = :f",
-            ExpressionAttributeValues: {
-                ":f": followerHandle,
-            },
-            TableName: this.tableName
         };
 
         const data = await this.client.send(new QueryCommand(params));
