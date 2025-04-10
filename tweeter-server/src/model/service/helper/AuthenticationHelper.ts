@@ -2,7 +2,7 @@ import { AbstractDaoFactory } from "../../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../../dao/factory/AWSDaoFactory";
 import { SessionsDao } from "../../dao/interface/SessionsDao";
 
-export class Authenticator {
+export class AuthenticationHelper {
     private readonly AUTH_TOKEN_LIFETIME = 8640000;
 
     private daoFactory: AbstractDaoFactory;

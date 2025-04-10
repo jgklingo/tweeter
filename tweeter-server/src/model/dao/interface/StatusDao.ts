@@ -7,4 +7,5 @@ export interface StatusDao {
         Promise<[feedItems: StatusDto[], hasMore: boolean]>;
     insertStoryItem: (authorHandle: string, storyItem: Status) => Promise<void>;
     insertFeedItem: (feedOwnerHandle: string, feedItem: Status) => Promise<void>;
+    batchInsertFeedItems: (feedOwnerHandles: string[], feedItem: StatusDto) => Promise<void>;
 }

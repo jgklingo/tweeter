@@ -5,7 +5,7 @@ import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { UserImageDao } from "../dao/interface/UserImageDao";
 import { UsersDao } from "../dao/interface/UsersDao";
 import { SessionsDao } from "../dao/interface/SessionsDao";
-import { Authenticator } from "./helper/AuthenticationHelper";
+import { AuthenticationHelper } from "./helper/AuthenticationHelper";
 
 export class UserService {
     private daoFactory: AbstractDaoFactory = new AWSDaoFactory();
@@ -13,7 +13,7 @@ export class UserService {
     private usersDao: UsersDao = this.daoFactory.getUsersDao();
     private sessionsDao: SessionsDao = this.daoFactory.getSessionsDao();
 
-    private authenticator: Authenticator = new Authenticator(this.daoFactory);
+    private authenticationHelper: AuthenticationHelper = new AuthenticationHelper(this.daoFactory);
 
     public async logout(token: string): Promise<void> {
         await this.sessionsDao.delete(token);
@@ -61,7 +61,7 @@ export class UserService {
         token: string,
         alias: string
     ): Promise<User | null> {
-        await this.authenticator.checkToken(token);
+        await this.authenticationHelper.checkToken(token);
         const [user] = await this.checkUser(alias);
         return user;
     };

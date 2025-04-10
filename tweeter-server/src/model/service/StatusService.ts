@@ -3,14 +3,16 @@ import { AbstractDaoFactory } from "../dao/factory/AbstractDaoFactory";
 import { AWSDaoFactory } from "../dao/factory/AWSDaoFactory";
 import { FollowsDao } from "../dao/interface/FollowsDao";
 import { StatusDao } from "../dao/interface/StatusDao";
-import { Authenticator } from "./helper/AuthenticationHelper";
+import { AuthenticationHelper } from "./helper/AuthenticationHelper";
+import { SQSQueueHelper } from "./helper/SQSQueueHelper";
 
 export class StatusService {
     private daoFactory: AbstractDaoFactory = new AWSDaoFactory();
     private statusDao: StatusDao = this.daoFactory.getStatusDao();
     private followsDao: FollowsDao = this.daoFactory.getFollowsDao();
 
-    private authenticator: Authenticator = new Authenticator(this.daoFactory);
+    private authenticationHelper: AuthenticationHelper = new AuthenticationHelper(this.daoFactory);
+    private sqsQueueHelper: SQSQueueHelper = new SQSQueueHelper();
 
     public async loadMoreFeedItems(
         token: string,
@@ -18,7 +20,7 @@ export class StatusService {
         pageSize: number,
         lastItem: StatusDto | null
     ): Promise<[StatusDto[], boolean]> {
-        await this.authenticator.checkToken(token);
+        await this.authenticationHelper.checkToken(token);
         const [feedItems, hasMore] = await this.statusDao.getPageOfFeedItems(userAlias, pageSize, lastItem?.timestamp);
         return [feedItems, hasMore];
     };
@@ -29,7 +31,7 @@ export class StatusService {
         pageSize: number,
         lastItem: StatusDto | null
     ): Promise<[StatusDto[], boolean]> {
-        await this.authenticator.checkToken(token);
+        await this.authenticationHelper.checkToken(token);
         const [storyItems, hasMore] = await this.statusDao.getPageOfStoryItems(userAlias, pageSize, lastItem?.timestamp);
         return [storyItems, hasMore];
     };
@@ -38,11 +40,9 @@ export class StatusService {
         token: string,
         newStatus: StatusDto
     ): Promise<void> {
-        const [, userHandle] = await this.authenticator.checkToken(token);
+        const [, userHandle] = await this.authenticationHelper.checkToken(token);
         await this.statusDao.insertStoryItem(userHandle, Status.fromDto(newStatus)!);
-        const followerHandles = (await this.followsDao.getAllFollowers(userHandle)).map(follow => follow.followerHandle);
-        followerHandles.forEach(async followerHandle => {
-            await this.statusDao.insertFeedItem(followerHandle, Status.fromDto(newStatus)!); // batch write command for feed items?
-        });
+
+        await this.sqsQueueHelper.queueStatus(userHandle, newStatus);
     };
 }
