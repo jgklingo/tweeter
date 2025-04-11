@@ -19,6 +19,10 @@ export class PostStatusPresenter extends ErrorPresenter<PostStatusView> {
         return this._statusService;
     }
 
+    public set statusService(statusService: StatusService) {
+        this._statusService = statusService;
+    }
+
     public async submitPost(post: string, currentUser: User, authToken: AuthToken) {
         this.doFailureReportingOperation(
             async () => {
