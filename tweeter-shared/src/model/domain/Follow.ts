@@ -1,27 +1,27 @@
 import { User } from "./User";
 
 export class Follow {
-    private _follower: User;
-    private _followee: User;
+    private _followerHandle: string;
+    private _followeeHandle: string;
 
-    public constructor(follower: User, followee: User) {
-        this._follower = follower;
-        this._followee = followee;
+    public constructor(followerHandle: string, followeeHandle: string) {
+        this._followerHandle = followerHandle;
+        this._followeeHandle = followeeHandle;
     }
 
-    public get follower(): User {
-        return this._follower;
+    public get followerHandle(): string {
+        return this._followerHandle;
     }
 
-    public set follower(value: User) {
-        this._follower = value;
-    }
-    
-    public get followee(): User {
-        return this._followee;
+    public set followerHandle(value: string) {
+        this._followerHandle = value;
     }
 
-    public set followee(value: User) {
-        this._followee = value;
-    }    
+    public get followeeHandle(): string {
+        return this._followeeHandle;
+    }
+
+    public set followeeHandle(value: string) {
+        this._followeeHandle = value;
+    }
 }
